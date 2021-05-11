@@ -1,0 +1,20 @@
+name: 'Cache Validation'
+description: 'Creates MD5 hashes of the contents of a list of cached directories.'
+inputs:
+  path:
+    description: 'A list of directories to validate'
+    required: true
+  cache_hit:
+    description: 'A boolean value to indicate if a cache hit occurred.'
+    required: true
+  fatal:
+    description: 'A boolean value to indicate if checksum errors should be treated as fatal errors.'
+    required: false
+outputs:
+  valid:
+    description: 'A boolean value to indicate if all files exist and are valid.'
+runs:
+  using: 'node12'
+  main: 'index.js'
+  post: 'md5sum.js'
+  post-if: 'success()'

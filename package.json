@@ -1,0 +1,16 @@
+{
+  "name": "cache-validation",
+  "version": "1.0.0",
+  "description": "Github action that validates cache objects",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest --collect-coverage"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "jest": "^26.6.3",
+    "tmp": "^0.2.1"
+  }
+}
