@@ -36,7 +36,7 @@ function expectOutput(stats, object) {
     .toBe(`::set-output name=valid::${object.valid}`);
 }
 
-test('check MD5SUMS file with 2 files one nested deeply', async () => {
+test('pass 2 valid files one nested deeply', async () => {
   process.env['INPUT_CACHE_HIT'] = 'true';
   process.env['INPUT_PATH'] = 'good\n  \n'; //empty lines should be ignored
 
@@ -63,11 +63,11 @@ async function testBadMissingFile(object) {
   expectOutput(stats, {exitCode: fatal ? 1 : 0, valid: 'false'});
 }
 
-test('fail MD5SUMS check for 2 files one nested deeply (part 1)', async () => {
+test('fail & return error code 1 w/fatal set to true', async () => {
   await testBadMissingFile({fatal: true});  // INPUT_FATAL = true
 });
 
-test('fail MD5SUMS check for 2 files one nested deeply (part 2)', async () => {
+test('fail & return error code 0 w/fatal set to false', async () => {
   await testBadMissingFile({fatal: false});  // INPUT_FATAL = false
 });
 
@@ -91,11 +91,11 @@ async function testNoChecksumFile(fatal) {
   expectOutput(stats, {exitCode: fatal === 'true' ? 1 : 0, valid: 'false'});
 }
 
-test('fail if MD5SUM does not exist (part 1)', async () => {
+test('fail on nonexistent MD5SUM & return 1 w/fatal set to true', async () => {
   await testNoChecksumFile('true');
 });
 
-test('fail if MD5SUM does not exist (part 2)', async () => {
+test('fail on nonexistent MD5SUM & return 0 w/fatal set to false', async () => {
   await testNoChecksumFile('false');
 });
 
