@@ -1,4 +1,5 @@
 /* Unit tests for index.js */
+const fs = require('fs')
 const path = require('path');
 
 const index = require('./index.js');
@@ -43,12 +44,14 @@ test('pass 2 valid files one nested deeply', async () => {
   const [hashes, stats] = util.setupGoodDirectory({MD5SUMS: true});
   await index.main();
   expectOutput(stats, {exitCode: 0, valid: 'true'})
+  expect(fs.existsSync('good')).toBe(true);
 });
 
 async function testBadMissingFile(object) {
   process.env['INPUT_CACHE_HIT'] = 'true';
   process.env['INPUT_PATH'] = 'good';
   process.env['INPUT_FATAL'] = object.fatal;
+  process.env['INPUT_REMOVE_INVALID_PATHS'] = object.remove_invalid_paths;
 
   const [hashes, stats] = util.setupBadDirectory();
   await index.main();
@@ -58,6 +61,9 @@ async function testBadMissingFile(object) {
       [`${path.join('good', 'better', 'best', 'foo')}: contents have changed!`],
       [`${path.join('good', 'bar')}: File not found!`],
     ]));
+
+  // If remove_invalid_paths is true then directory good should not exist
+  expect(fs.existsSync('good')).toBe(!object.remove_invalid_paths);
 
   /* Exit code 1 if INPUT_FATAL is true, 0 if false */
   expectOutput(stats, {exitCode: fatal ? 1 : 0, valid: 'false'});
@@ -69,6 +75,10 @@ test('fail & return error code 1 w/fatal set to true', async () => {
 
 test('fail & return error code 0 w/fatal set to false', async () => {
   await testBadMissingFile({fatal: false});  // INPUT_FATAL = false
+});
+
+test('fail & remove path w/ remove_invalid_paths set to true', async () => {
+  await testBadMissingFile({fatal: false, remove_invalid_paths: true});
 });
 
 async function testNoChecksumFile(fatal) {
