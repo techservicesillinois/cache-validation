@@ -22,6 +22,11 @@ function checkHash(filePath, old_hash) {
   if (hash !== old_hash) {
     invalid++;
     util.errorMessage(`${filePath}: contents have changed!`);
+
+    if (remove_invalid_files) {
+      fs.rmdirSync(filePath, { recursive: true });
+      console.log("Removed invalid file: ${filePath}");
+    }
   } else {
     valid++;
   }
@@ -59,6 +64,7 @@ function initGlobalVars() {
   /* Return 1 on checksum or file errors if true, otherwise 0 */
   global.fatal = false;
   global.remove_invalid_paths = false;
+  global.remove_invalid_files = false;
 }
 
 function stats() {
@@ -87,6 +93,10 @@ exports.main = async function () {
 
     if (process.env['INPUT_REMOVE_INVALID_PATHS'] === 'true') {
       remove_invalid_paths = true;
+    }
+
+    if (process.env['INPUT_REMOVE_INVALID_FILES'] === 'true') {
+      remove_invalid_files = true;
     }
 
     for (const directory of process.env['INPUT_PATH'].split('\n')) {
