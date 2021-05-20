@@ -13,6 +13,9 @@ inputs:
   remove_invalid_paths:
     description: 'A boolean value that when set to true causes a path to be recursively removed if it contains invalid files.'
     required: false
+  remove_invalid_files:
+    description: 'A boolean value that when set to true causes invalid files in a path to be removed, valid files are always retained.'
+    required: false
 outputs:
   valid:
     description: 'A boolean value to indicate if all files exist and are valid.'

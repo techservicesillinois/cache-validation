@@ -52,18 +52,29 @@ async function testBadMissingFile(object) {
   process.env['INPUT_PATH'] = 'good';
   process.env['INPUT_FATAL'] = object.fatal;
   process.env['INPUT_REMOVE_INVALID_PATHS'] = object.remove_invalid_paths;
+  process.env['INPUT_REMOVE_INVALID_FILES'] = object.remove_invalid_files;
 
   const [hashes, stats] = util.setupBadDirectory();
   await index.main();
 
+  const foo = path.join('good', 'better', 'best', 'foo');
+  const bar = path.join('good', 'bar');
+
   expect(console.log.mock.calls)
     .toEqual(expect.arrayContaining([
-      [`${path.join('good', 'better', 'best', 'foo')}: contents have changed!`],
-      [`${path.join('good', 'bar')}: File not found!`],
+      [`${foo}: contents have changed!`],
+      [`${bar}: File not found!`],
     ]));
 
   // If remove_invalid_paths is true then directory good should not exist
   expect(fs.existsSync('good')).toBe(!object.remove_invalid_paths);
+
+  // If remove_invalid_files is true then file foo should not exist
+  expect(fs.existsSync(foo)).toBe(!object.remove_invalid_files &&
+                                  !object.remove_invalid_paths);
+
+  // File bar should never exist
+  expect(fs.existsSync(bar)).toBe(false);;
 
   /* Exit code 1 if INPUT_FATAL is true, 0 if false */
   expectOutput(stats, {exitCode: fatal ? 1 : 0, valid: 'false'});
@@ -79,6 +90,10 @@ test('fail & return error code 0 w/fatal set to false', async () => {
 
 test('fail & remove path w/ remove_invalid_paths set to true', async () => {
   await testBadMissingFile({fatal: false, remove_invalid_paths: true});
+});
+
+test('fail & remove file w/ remove_invalid_files set to true', async () => {
+  await testBadMissingFile({fatal: false, remove_invalid_files: true});
 });
 
 async function testNoChecksumFile(fatal) {
