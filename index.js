@@ -65,6 +65,7 @@ function initGlobalVars() {
   global.fatal = false;
   global.remove_invalid_paths = false;
   global.remove_invalid_files = false;
+  global.touch = false;
 }
 
 function stats() {
@@ -99,9 +100,18 @@ exports.main = async function () {
       remove_invalid_files = true;
     }
 
+    if (process.env['INPUT_TOUCH'] === 'true') {
+      touch = true;
+    }
+
     for (const directory of process.env['INPUT_PATH'].split('\n')) {
       if (directory.trim() !== '') {
         await checkHashes(path.join(directory, "MD5SUMS"));
+
+        if (touch) {
+          util.touch(directory);
+        }
+
         if (remove_invalid_paths && (missing > 0 || invalid > 0)) {
           fs.rmdirSync(directory, { recursive: true });
           console.log("Removed invalid path: ${directory}");

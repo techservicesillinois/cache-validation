@@ -41,7 +41,7 @@ test('generate MD5SUMS file with 2 files one nested deeply', () => {
   process.env['INPUT_CACHE_HIT'] = 'false';
   process.env['INPUT_PATH'] = 'good\n  \n'; //empty lines should be ignored
 
-  const [hashes, stats] = util.setupGoodDirectory({MD5SUMS: false});
+  const [hashes] = util.setupGoodDirectory({MD5SUMS: false});
   md5sum.main();
   expectOutput(hashes);
 });
@@ -63,7 +63,7 @@ test('fail if MD5SUM exists', () => {
   process.env['INPUT_CACHE_HIT'] = 'false';
   process.env['INPUT_PATH'] = 'good';
 
-  const [hashes, stats] = util.setupGoodDirectory({MD5SUMS: true});
+  util.setupGoodDirectory({MD5SUMS: true});
   md5sum.main();
 
   expect(process.exitCode).toBe(1);

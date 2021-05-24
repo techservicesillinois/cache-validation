@@ -16,6 +16,9 @@ inputs:
   remove_invalid_files:
     description: 'A boolean value that when set to true causes invalid files in a path to be removed, valid files are always retained.'
     required: false
+  touch:
+    description: 'A boolean value that when set to true recursively updates the modification and access times of each path.'
+    required: false
 outputs:
   valid:
     description: 'A boolean value to indicate if all files exist and are valid.'
