@@ -44,6 +44,8 @@ exports.cleanEnv = function () {
 exports.setupGoodDirectory = function (object) {
   const bar = path.join('good', 'bar');
   const foo = path.join('good', 'better', 'best', 'foo');
+  const paths = [bar, foo, 'good/better/best', 'good/better', 'good'];
+  const time = new Date(0); // Unix epoch Jan 1, 1970
 
   const hashes = [
       `37b51d194a7513e45b56f6524f2d51f2  ${foo}`,
@@ -60,7 +62,12 @@ exports.setupGoodDirectory = function (object) {
     fs.writeFileSync(path.join('good', 'MD5SUMS'), hashes.join('\n'));
   }
 
-  return [hashes, stats];
+  /* touch MUST be last to ensure mtime of dirs do  not change! */
+  for (const path of paths) {
+    fs.utimesSync(path, time, time);
+  }
+
+  return [hashes, stats, paths, time];
 }
 
 exports.setupBadDirectory = function (object) {

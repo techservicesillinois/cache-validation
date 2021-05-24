@@ -37,14 +37,38 @@ function expectOutput(stats, object) {
     .toBe(`::set-output name=valid::${object.valid}`);
 }
 
-test('pass 2 valid files one nested deeply', async () => {
+async function testGoodDir(object) {
   process.env['INPUT_CACHE_HIT'] = 'true';
-  process.env['INPUT_PATH'] = 'good\n  \n'; //empty lines should be ignored
+  process.env['INPUT_PATH'] = object.path;
+  process.env['INPUT_TOUCH'] = object.touch;
 
-  const [hashes, stats] = util.setupGoodDirectory({MD5SUMS: true});
+  const [hashes, stats, paths, time] = util.setupGoodDirectory(
+    {MD5SUMS: true});
   await index.main();
   expectOutput(stats, {exitCode: 0, valid: 'true'})
   expect(fs.existsSync('good')).toBe(true);
+
+  for (const path of paths) {
+    const mtime = [path, fs.statSync(path).mtime.getTime()];
+    const epic = [path, 0];
+
+    // Expect paths' atime and mtime to be the Unix epic time (0)
+    // unless touched. Not checking atime because Make only looks
+    // at mtime, and the behavior of atime is system dependent.
+    if (object.touch) {
+      expect(mtime).not.toEqual(epic);
+    } else {
+      expect(mtime).toEqual(epic);
+    }
+  }
+}
+
+test('pass 2 valid files one nested deeply', async () => {
+  await testGoodDir({path: 'good\n  \n'}); //empty lines should be ignored
+});
+
+test('check that touch option works', async () => {
+  await testGoodDir({path: 'good', touch: true});
 });
 
 async function testBadMissingFile(object) {
@@ -54,7 +78,7 @@ async function testBadMissingFile(object) {
   process.env['INPUT_REMOVE_INVALID_PATHS'] = object.remove_invalid_paths;
   process.env['INPUT_REMOVE_INVALID_FILES'] = object.remove_invalid_files;
 
-  const [hashes, stats] = util.setupBadDirectory();
+  const [hashes, stats, /* ignore paths */] = util.setupBadDirectory();
   await index.main();
 
   const foo = path.join('good', 'better', 'best', 'foo');
@@ -101,7 +125,7 @@ async function testNoChecksumFile(fatal) {
   process.env['INPUT_PATH'] = 'good';
   process.env['INPUT_FATAL'] = fatal;
 
-  const [hashes, stats] = util.setupGoodDirectory({MD5SUMS: false});
+  const [hashes, stats, , ] = util.setupGoodDirectory({MD5SUMS: false});
   stats.valid = 0;
   stats.missing = 1;
 
