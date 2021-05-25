@@ -1,5 +1,28 @@
 "use strict";
 
+const fs = require('fs');
+const path = require('path');
+
+exports.walkPath = function (Path, callback) {
+  if (fs.statSync(Path).isDirectory()) {
+    for (const file of fs.readdirSync(Path)) {
+      const filePath = path.join(Path, file);
+      exports.walkPath(filePath, callback);
+    }
+  }
+
+  callback(Path);
+}
+
+exports.touch = function (directory) {
+  const now = new Date();
+
+  exports.walkPath(directory, function(filePath) {
+    console.log("touch " + filePath);
+    fs.utimesSync(filePath, now, now);
+  });
+}
+
 exports.error = function (e) {
   exports.errorMessage(e.message);
 }
