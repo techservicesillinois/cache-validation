@@ -58,6 +58,7 @@ function initGlobalVars() {
 
   /* Return 1 on checksum or file errors if true, otherwise 0 */
   global.fatal = false;
+  global.remove_invalid_paths = false;
 }
 
 function stats() {
@@ -81,12 +82,20 @@ exports.main = async function () {
     }
 
     if (process.env['INPUT_FATAL'] === 'true') {
-      fatal = 'true';
+      fatal = true;
+    }
+
+    if (process.env['INPUT_REMOVE_INVALID_PATHS'] === 'true') {
+      remove_invalid_paths = true;
     }
 
     for (const directory of process.env['INPUT_PATH'].split('\n')) {
       if (directory.trim() !== '') {
         await checkHashes(path.join(directory, "MD5SUMS"));
+        if (remove_invalid_paths && (missing > 0 || invalid > 0)) {
+          fs.rmdirSync(directory, { recursive: true });
+          console.log("Removed invalid path: ${directory}");
+        }
       }
     }
 
