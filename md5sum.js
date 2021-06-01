@@ -12,23 +12,12 @@ const path = require('path');
 
 const util = require('./utils.js');
 
-// The code for this function was taken from this blog post:
-// https://allenhwkim.medium.com/nodejs-walk-directory-f30a2d8f038f
-function walkDir(dir, callback) {
-  for (const f of fs.readdirSync(dir)) {
-    const dirPath = path.join(dir, f);
-    const isDirectory = fs.statSync(dirPath).isDirectory();
-    isDirectory ?
-      walkDir(dirPath, callback) : callback(path.join(dir, f));
-  }
-};
-
 function createMD5SUMS(directory) {
   const file = fs.openSync(path.join(directory, "MD5SUMS"), 'wx');
 
   let count = 0;
-  walkDir(directory, function(filePath) {
-    if (path.basename(filePath) != 'MD5SUMS') {
+  util.walkPath(directory, function(filePath, isDir) {
+    if (!isDir && path.basename(filePath) != 'MD5SUMS') {
       const contents = fs.readFileSync(filePath, 'utf8');
       const hash = crypto.createHash('md5').update(contents).digest("hex")
       fs.writeSync(file, `${hash}  ${filePath}\n`);
