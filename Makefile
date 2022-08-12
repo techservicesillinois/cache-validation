@@ -4,15 +4,18 @@ all: test
 
 deps: node_modules
 
+debug:
+	ndb $(npm bin)/jest --watch --no-cache --runInBand
+
 test: node_modules
 	npm run test
 
 package-lock.json: package.json
-	npm install --also=dev
+	npm install --include=dev
 	@touch $@
 
 node_modules: package-lock.json
-	npm ci --also=dev
+	npm ci --include=dev
 	@touch $@
 
 clean:
