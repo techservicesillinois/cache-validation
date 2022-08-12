@@ -7,8 +7,8 @@ This action allows cache objects to be validated using MD5 checksums.
 This action is supported by the Cybersecurity Development team at
 the University of Illinois, on a best-effort basis. As of the last
 update to this README, the expected End-of-Life and End-of-Support
-date of this version is April 2022, the same as its sole dependency
-[Node.js 12](https://nodejs.org/en/about/releases/).
+date of this version is April 2023, the same as its sole dependency
+[Node.js 14](https://nodejs.org/en/about/releases/).
 
 ## Usage
 
