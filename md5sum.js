@@ -13,7 +13,7 @@ const path = require('path');
 const util = require('./utils.js');
 
 function createMD5SUMS(directory) {
-  const file = fs.openSync(path.join(directory, "MD5SUMS"), 'wx');
+  const file = fs.openSync(path.join(directory, "MD5SUMS"), 'w');
 
   let count = 0;
   util.walkPath(directory, function(filePath, isDir) {
