@@ -59,17 +59,16 @@ test('generate empty MD5SUMS file in an empty directory', () => {
   expect(fs.readdirSync(tmpdir.name).length).toBe(1)
 });
 
-test('fail if MD5SUM exists', () => {
+// Regression #16: Overwrite existing MD5SUMS on cache miss
+test('Generate MD5SUMS even if MD5SUMS exists', () => {
   process.env['INPUT_CACHE_HIT'] = 'false';
   process.env['INPUT_PATH'] = 'good';
 
-  util.setupGoodDirectory({MD5SUMS: true});
-  md5sum.main();
+  const [hashes] = util.setupGoodDirectory({MD5SUMS: false});
+  fs.writeFileSync(path.join('good', 'MD5SUMS'), '');
 
-  expect(process.exitCode).toBe(1);
-  expect(console.log.mock.calls[0][0])
-    .toBe("EEXIST: file already exists, open " +
-          `'${path.join("good", "MD5SUMS")}'`);
+  md5sum.main();
+  expectOutput(hashes);
 });
 
 test('fail on nonexistent path', () => {
