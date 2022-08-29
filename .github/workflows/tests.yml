@@ -10,14 +10,35 @@ jobs:
         os: [ubuntu-latest, macos-latest, windows-latest]
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Use Node.js
-      uses: actions/setup-node@v1
+      uses: actions/setup-node@v3
       with:
-        node-version: '14.x'
+        node-version: '16.x'
 
     - name: Install dependencies
       run: make deps
 
     - name: Tests
       run: make test
+
+  # Smoke test for issue #21
+  smoke-test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Use Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '16.x'
+
+    - name: Check cache hit works
+      uses: ./
+      with:
+        path: tests/good
+        cache_hit: true
+        fatal: true

@@ -23,7 +23,7 @@ outputs:
   valid:
     description: 'A boolean value to indicate if all files exist and are valid.'
 runs:
-  using: 'node14'
+  using: 'node16'
   main: 'index.js'
   post: 'md5sum.js'
   post-if: 'success()'

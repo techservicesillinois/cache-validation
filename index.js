@@ -24,7 +24,7 @@ function checkHash(filePath, old_hash) {
     util.errorMessage(`${filePath}: contents have changed!`);
 
     if (remove_invalid_files) {
-      fs.rmdirSync(filePath, { recursive: true });
+      fs.rmSync(filePath, { recursive: true });
       console.log("Removed invalid file: ${filePath}");
     }
   } else {
@@ -46,12 +46,12 @@ function checkHashes(filePath) {
         input: stream,
         console: false
       })
+        .on('error', resolve)
+        .on('line', function(line) {
+          const [hash, filePath] = line.split('  ');
 
-      readInterface.on('line', function(line) {
-        const [hash, filePath] = line.split('  ');
-
-        util.fileErrorHandler(checkHash, filePath, hash);
-      });
+          util.fileErrorHandler(checkHash, filePath, hash);
+        })
   });
 }
 
@@ -113,7 +113,7 @@ exports.main = async function () {
         }
 
         if (remove_invalid_paths && (missing > 0 || invalid > 0)) {
-          fs.rmdirSync(directory, { recursive: true });
+          fs.rmSync(directory, { recursive: true });
           console.log("Removed invalid path: ${directory}");
         }
       }
