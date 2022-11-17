@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v1.1.4] - 2022-11-18
+* Fix removed file and directory names not displayed ([#25])
+
 ## [v1.1.3] - 2022-08-26
 * Upgrade to Node v16 ([#22])
 
@@ -21,6 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [v1.0.0] - 2021-05-27
 * Initial release ([#1])
 
+[#25]: https://github.com/techservicesillinois/cache-validation/pull/25
 [#22]: https://github.com/techservicesillinois/cache-validation/pull/22
 [#20]: https://github.com/techservicesillinois/cache-validation/pull/20
 [#19]: https://github.com/techservicesillinois/cache-validation/pull/19
@@ -29,6 +33,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#11]: https://github.com/techservicesillinois/cache-validation/pull/11
 [#1]: https://github.com/techservicesillinois/cache-validation/pull/1
 
+[v1.1.4]: https://github.com/techservicesillinois/cache-validation/releases/tag/v1.1.4
 [v1.1.3]: https://github.com/techservicesillinois/cache-validation/releases/tag/v1.1.3
 [v1.1.2]: https://github.com/techservicesillinois/cache-validation/releases/tag/v1.1.2
 [v1.1.1]: https://github.com/techservicesillinois/cache-validation/releases/tag/v1.1.1

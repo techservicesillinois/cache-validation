@@ -91,9 +91,19 @@ async function testBadMissingFile(object) {
     ]));
 
   // If remove_invalid_paths is true then directory good should not exist
+  if (remove_invalid_paths) {
+      expect(console.log.mock.calls).toEqual(expect.arrayContaining([
+          [`Removed invalid path: good`],
+        ]));
+  }
   expect(fs.existsSync('good')).toBe(!object.remove_invalid_paths);
 
   // If remove_invalid_files is true then file foo should not exist
+  if (remove_invalid_files) {
+      expect(console.log.mock.calls).toEqual(expect.arrayContaining([
+          [`Removed invalid file: ${foo}`],
+        ]));
+  }
   expect(fs.existsSync(foo)).toBe(!object.remove_invalid_files &&
                                   !object.remove_invalid_paths);
 

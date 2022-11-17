@@ -25,7 +25,7 @@ function checkHash(filePath, old_hash) {
 
     if (remove_invalid_files) {
       fs.rmSync(filePath, { recursive: true });
-      console.log("Removed invalid file: ${filePath}");
+      console.log(`Removed invalid file: ${filePath}`);
     }
   } else {
     valid++;
@@ -114,7 +114,7 @@ exports.main = async function () {
 
         if (remove_invalid_paths && (missing > 0 || invalid > 0)) {
           fs.rmSync(directory, { recursive: true });
-          console.log("Removed invalid path: ${directory}");
+          console.log(`Removed invalid path: ${directory}`);
         }
       }
     }
