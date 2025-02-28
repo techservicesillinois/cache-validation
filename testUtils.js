@@ -22,6 +22,12 @@ exports.beforeEach = function () {
   tmpdir = tmp.dirSync({ template: 'cache-validation-test-XXXXXX',
     unsafeCleanup: true });
   process.chdir(tmpdir.name);
+
+  const ghdir = tmp.dirSync({ template: 'github-output-test-XXXXXX',
+    unsafeCleanup: true });
+  const ghOutput = path.join(ghdir.name, 'github.output.txt')
+  process.env['GITHUB_OUTPUT'] = ghOutput
+  fs.writeFileSync(ghOutput, '');
 };
 
 exports.afterEach = function () {
@@ -38,6 +44,7 @@ exports.cleanEnv = function () {
   delete process.env['INPUT_CACHE_HIT'];
   delete process.env['INPUT_PATH'];
   delete process.env['INPUT_FATAL'];
+  delete process.env['GITHUB_OUTPUT'];
   process.exitCode = 0;
 }
 
