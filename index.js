@@ -68,14 +68,28 @@ function initGlobalVars() {
   global.touch = false;
 }
 
+function ghOutput(key, value) {
+  const filename = process.env['GITHUB_OUTPUT'];
+  const data = key + '=' + value
+
+  try {
+    fs.appendFileSync(filename, data);
+    console.log('Wrote output:', filename, data)
+  } catch (err) {
+    console.error(err);
+  }
+}
+
 function stats() {
   console.log(`Invalid file(s): ${invalid}`)
   console.log(`Missing file(s): ${missing}`)
   console.log(`Valid file(s): ${valid}`)
+
+
   if (invalid === 0 && missing === 0) {
-    console.log('::set-output name=valid::true')
+    ghOutput('valid','true')
   } else {
-    console.log('::set-output name=valid::false')
+    ghOutput('valid','false')
   }
 }
 

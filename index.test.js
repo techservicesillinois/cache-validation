@@ -33,8 +33,8 @@ function expectOutput(stats, object) {
   expect(console.log.mock.calls[lastLine-1][0])
     .toBe(`Valid file(s): ${stats.valid}`);
   /* Last line should set output values */
-  expect(console.log.mock.calls[lastLine][0])
-    .toBe(`::set-output name=valid::${object.valid}`);
+  const data = fs.readFileSync(process.env['GITHUB_OUTPUT'], 'utf8');
+  expect(data).toBe(`valid=${object.valid}`);
 }
 
 async function testGoodDir(object) {
