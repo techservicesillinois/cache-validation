@@ -123,7 +123,12 @@ exports.main = async function () {
         await checkHashes(path.join(directory, "MD5SUMS"));
 
         if (touch) {
-          util.touch(directory);
+          try {
+            util.touch(directory);
+          } catch (err) {
+            console.error(err.message);
+            invalid++;
+          }
         }
 
         if (remove_invalid_paths && (missing > 0 || invalid > 0)) {
